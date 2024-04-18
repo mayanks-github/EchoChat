@@ -1,0 +1,100 @@
+<h1><%= @topic.title %></h1>
+<p><strong>Description:</strong> <%= @topic.description %></p>
+<p><strong>Created by:</strong> <%= @topic.creator.email %></p>
+
+<p><strong>Admins:</strong> <button id="toggleAdmins">Admins</button></p>
+<ul class="toggle-list admins-list" style="display: none;">
+  <% @topic.admins.each do |admin| %>
+    <li><%= admin.email %></li>
+  <% end %>
+</ul>
+
+<p><strong>Subscribers:</strong> <button id="toggleSubscribers">Subscribers</button></p>
+<ul class="toggle-list subscribers-list" style="display: none;">
+  <% @topic.subscribers.each do |subscriber| %>
+    <li><%= subscriber.email %></li>
+  <% end %>
+</ul>
+
+<p><strong>Messages:</strong></p>
+<% @topic.messages.each do |message| %>
+  <div class="message">
+    <p><strong>From:</strong> <%= message.user.email %></p>
+    <p><strong>Content:</strong> <%= message.content %></p>
+
+    <% if current_user == message.user %>
+      <%= link_to "Delete", topic_message_path(@topic, message), data: { "turbo-method": :delete } %>
+    <% end %>
+  </div>
+<% end %>
+
+<% if current_user.subscribed_topics.include?(@topic) %>
+  <div id="message-box">
+    <%= form_with(model: [@topic, Message.new], local: true) do |form| %>
+      <%= form.hidden_field :user_id, value: current_user.id %>
+      <%= form.text_area :content, placeholder: "Type your message here..." %>
+      <%= form.submit "Send Message" %>
+    <% end %>
+  </div>
+<% else %>
+  <p>You need to be subscribed to this topic to send messages.</p>
+<% end %>
+
+<style>
+.message {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.message p {
+  margin: 5px 0;
+}
+
+.message a {
+  color: blue;
+  text-decoration: none;
+  margin-right: 10px;
+}
+
+.message a:hover {
+  text-decoration: underline;
+}
+
+.toggle-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.toggle-list li {
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+
+.toggle-list li:before {
+  content: "\2022";
+  color: #333; 
+  display: inline-block;
+  width: 1em;
+  margin-left: -1em;
+}
+</style>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var toggleAdminsButton = document.getElementById('toggleAdmins');
+  var toggleSubscribersButton = document.getElementById('toggleSubscribers');
+
+  var adminsList = document.querySelector('.admins-list');
+  var subscribersList = document.querySelector('.subscribers-list');
+
+  toggleAdminsButton.addEventListener('click', function() {
+    adminsList.style.display = (adminsList.style.display === 'none') ? 'block' : 'none';
+  });
+
+  toggleSubscribersButton.addEventListener('click', function() {
+    subscribersList.style.display = (subscribersList.style.display === 'none') ? 'block' : 'none';
+  });
+});
+</script>

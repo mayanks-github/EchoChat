@@ -1,8 +1,26 @@
 <h1>Welcome to ActionCable Portfolio Project</h1>
 <% if user_signed_in? %>
   <%= link_to "Logout", destroy_user_session_path, method: :delete %>
+  <h2>Topics</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Description</th>
+        <th>Creator</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @topics.each do |topic| %>
+        <tr>
+          <td><%= link_to topic.title, topic_path(topic) %></td>
+          <td><%= topic.description %></td>
+          <td><%= topic.creator.email %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
 <% else %>
   <%= link_to "Sign in", new_user_session_path %>
   <%= link_to "Sign up", new_user_registration_path %>
 <% end %>
-
