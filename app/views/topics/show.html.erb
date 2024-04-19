@@ -17,16 +17,18 @@
 </ul>
 
 <p><strong>Messages:</strong></p>
+<div id="messagesId"> 
 <% @topic.messages.each do |message| %>
-  <div class="message">
-    <p><strong>From:</strong> <%= message.user.email %></p>
+  <div class="message" data-message-id="<%= message.id %>">
+    <p><strong>From:</strong> <%= message.creator.email %></p>
     <p><strong>Content:</strong> <%= message.content %></p>
 
-    <% if current_user == message.user %>
+    <% if current_user == message.creator %>
       <%= link_to "Delete", topic_message_path(@topic, message), data: { "turbo-method": :delete } %>
     <% end %>
   </div>
 <% end %>
+</div>
 
 <% if current_user.subscribed_topics.include?(@topic) %>
   <div id="message-box">

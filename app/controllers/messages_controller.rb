@@ -4,7 +4,7 @@ class MessagesController < ApplicationController
     def create
       @topic = Topic.find(params[:topic_id])
       @message = @topic.messages.new(message_params)
-      @message.user = current_user
+      @message.creator = current_user
   
       if @message.save
         redirect_to topic_path(@topic), notice: 'Message created successfully.'
